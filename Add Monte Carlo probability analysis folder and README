@@ -1,1 +1,66 @@
+# Monte Carlo Probability Analysis — RPD Hypothesis
+**Author:** Aaron Riley Hurst  
+**Date:** March 2026  
+**Associated manuscript:** "A Supercharged Earth: Evidence for 
+Catastrophic Planetary Disassembly and Its Implications for 
+Solar System Architecture and Habitability"
 
+## Overview
+Three-layer Monte Carlo simulation quantifying the probability 
+of the Rapid Planetary Disassembly (RPD) event sequence arising 
+by random natural processes.
+
+**Grand Total Result: P = 2.81 × 10⁻³⁹**  
+(1 in 3.56 × 10³⁸ — fewer than one expected occurrence in 
+1.78 quadrillion observable universes)
+
+## Requirements
+- Python 3.11.9
+- NumPy 2.x
+- SciPy 1.x
+- Matplotlib 3.x
+- Pandas 2.x
+
+Install dependencies:
+pip install numpy scipy matplotlib pandas
+
+## Scripts and Execution Order
+
+| Script | Layer | Description | Runtime |
+|--------|-------|-------------|---------|
+| layer1_timing.py | Layer 1 | Timing probability | ~66 sec |
+| layer2_orbital_position.py | Layer 2 | Orbital position probability | ~42 sec |
+| layer3_energy_delivery.py | Layer 3 | Energy delivery probability | ~110 sec |
+| sensitivity_analysis.py | All | 17-parameter sensitivity sweep | ~variable |
+| synthesis_visualization.py | All | Master summary figure | ~variable |
+
+Run each script independently. Scripts are not dependent on 
+each other's output.
+
+## Reproducibility
+Fixed random seeds are used throughout:
+- Layer 1: seed = 42
+- Layer 2: seed = 43  
+- Layer 3: seed = 44
+
+All results are fully reproducible across platforms using 
+these seeds with the specified library versions.
+
+## Results Summary
+
+| Layer | Description | P value |
+|-------|-------------|---------|
+| Layer 1 | Timing (3 events, 3.5 Myr window) | 2.10 × 10⁻¹¹ |
+| Layer 2 | Orbital position (4 constraints) | 7.14 × 10⁻⁵ |
+| Layer 3 | Energy delivery (relativistic impactor) | 1.87 × 10⁻²⁴ |
+| **Grand Total** | **All layers combined** | **2.81 × 10⁻³⁹** |
+
+Under maximally generous parameter assumptions: P = 1.79 × 10⁻³³  
+Expected occurrences in observable universe: 5.62 × 10⁻¹⁶
+
+## Citation
+Hurst, A.R. (2026). The Rapid Planetary Disassembly Hypothesis.
+Submitted to Nature Astronomy, March 2026.
+
+## License
+MIT License — free to use with attribution.
