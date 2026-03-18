@@ -52,7 +52,7 @@ visualizations.
 
 ---
 
-### 3. N-Body Trajectory Simulation (Figure 10)
+### 3. N-Body Trajectory Simulation (Figure 6)
 **`RPDNBodyCodePrime3.0.py`**  
 REBOUND N-body simulation of asteroid trajectories ejected from three 
 sequential RPD explosion events. Models the immediate dispersal of debris 
