@@ -1,83 +1,152 @@
-# Simulated-Asteroid-Trajectories-from-RPD-Explosion-Events
-Overview and Instructions for Reviewers: Simulation of Asteroid Trajectories from RPD Explosion Events
-1. Purpose of the Simulation
-This simulation models the trajectories of asteroids ejected from three distinct explosion events of a hypothetical super-Earth, "Earth Mark One" (EM1), as part of the Rapid Planetary Disassembly (RPD) Hypothesis. The simulation demonstrates:
+# RPD Hypothesis — Simulation Code Repository
 
-The immediate dispersal of debris from EM1’s disruption at ~4.55 Ga, supporting the RPD’s explanation for the Late Heavy Bombardment (LHB) and annual meteor showers.
-How debris from these events forms the asteroid belt and intersects Earth’s orbit, contrasting with the Nice Model’s gradual scattering.
-The simulation uses the REBOUND library for high-precision N-body integration, NumPy for numerical operations, and Matplotlib for 3D visualization.
+Supplementary simulation code for:
 
-2. Installation and Dependencies
-To run the simulation, reviewers will need the following Python libraries installed:
+**"A Supercharged Earth: Evidence for Catastrophic Planetary Disassembly 
+and Its Implications for Solar System Architecture and Habitability"**  
+Aaron Riley Hurst (2026)  
+Submitted to *Icarus* (Editor-in-Chief: Alessandro Morbidelli)
 
-REBOUND: For N-body simulation.
-NumPy: For numerical computations.
-Matplotlib: For plotting the 3D trajectories.
-Install these dependencies using pip:
+---
 
-bash
+## Repository Contents
 
-Collapse
+### 1. Joint Monte Carlo Probability Analysis (Primary Citation)
+**`rpd_joint_monte_carlo.py`**  
+The primary statistical simulation cited in Sections 8.5 and 10 of the 
+manuscript. Evaluates all three constraint families simultaneously in a 
+single integrated loop (N = 5 × 10⁷ joint trials). Implements Fréchet 
+copula bounds to model timing-energy correlation across ρ = 0.0 to ρ = 1.0.
 
-Wrap
+**Results:**
+- P_L1 (timing): 2.10 × 10⁻¹¹
+- P_L2 (orbital position): 7.14 × 10⁻⁵
+- P_L3 (energy delivery): 7.998 × 10⁻¹⁸
+- Joint probability (ρ=0, independent): 1.20 × 10⁻³²
+- Joint probability (ρ=1.0, max correlation): 5.71 × 10⁻²²
+- Sub-galactic expected frequency at all tested correlation values
 
-Copy
-pip install rebound numpy matplotlib
-Ensure Python 3.x is installed, as the code is written in Python.
+---
 
-3. Simulation Setup
-The simulation is set up as follows:
+### 2. Analytical Verification — Original Layer Scripts
+Independent analytical verification scripts run at N = 10⁹ per layer 
+(Section 10.6). Results are referenced in the sensitivity analysis (Section 10.5.3).
 
-Sun: Placed at the origin (0, 0, 0) with a mass of 1 solar mass.
-Earth Mark Two: Positioned at 1 AU from the Sun with a circular orbit in the xy-plane, representing a stable reference body (mass ~3.003e-6 solar masses).
-Explosion Events: Three events occur at:
-t=0 years, position (2.8, 0, 0) AU.
-t=20 years, position (3.0, 0, 0) AU.
-t=40 years, position (1.0, 0, 0) AU. Each event ejects 50 massless asteroids with random velocities combining their orbital velocity and an explosion velocity up to 1.2 times the escape velocity from their respective positions.
-Asteroids are added to the simulation at each explosion time, and their trajectories are computed using REBOUND’s ias15 integrator for high accuracy, with an initial timestep of 0.001 years.
+**`rpd_layer1B_billion.py`** — Layer 1 timing probability. Runs 1 billion 
+trials with both empirical and exact analytical derivation. Validates 
+P(Layer 1) = 2.10 × 10⁻¹¹. Runtime: ~66 seconds.
 
-4. Running the Simulation
-The simulation runs from t=0 to t=100 years in 0.1-year steps, totaling 1001 time steps. At each step:
+**`rpd_layer2_orbital.py`** — Layer 2 orbital position probability. Samples 
+all four orbital phase constraints across 1 billion trials. Validates 
+P(Layer 2) = 7.14 × 10⁻⁵. Runtime: ~42 seconds.
 
-If the current time matches an explosion event (t=0, 20, or 40), 50 asteroids are added with small random displacements (up to ±1e-6 AU) and velocities (orbital + random explosion component).
-The simulation integrates forward in time using REBOUND, tracking the positions of all particles (Sun, Earth Mark Two, and up to 150 asteroids by t=40).
-Progress is printed every 10 years (e.g., "Simulated up to t = 10.0 years") for tracking.
-The total number of particles by the end is 152 (Sun, Earth Mark Two, and 150 asteroids).
+**`rpd_layer3_energy.py`** — Layer 3 energy delivery probability. Models 
+relativistic velocity requirements, mass constraints, and directional 
+probabilities for all three impact events. Runtime: ~110 seconds.
 
-5. Plotting the Results
-The simulation generates a 3D plot with the following elements:
+**`rpd_sensitivity_analysis.py`** — 17 independent parameter sweeps plus 
+one combined maximum-generosity sweep. Produces Table 6 of the manuscript.
 
-Sun: Yellow scatter point at (0, 0, 0), size 100 for visibility.
-Earth Mark Two: Blue line showing its circular orbit at 1 AU.
-Asteroid Trajectories:
-Pink: 50 asteroids from the first event (t=0, 2.8 AU), particles 2–51.
-Yellow: 50 asteroids from the second event (t=20, 3.0 AU), particles 52–101.
-Green: 50 asteroids from the third event (t=40, 1.0 AU), particles 102–151. Each trajectory is plotted with 50% transparency (alpha=0.5) for clarity.
-The plot is limited to ±5 AU in all axes (x, y, z) to focus on the inner solar system, where the Sun, Earth Mark Two, and bound asteroids are visible. Escaping asteroids may extend beyond this range but are truncated to maintain focus. Labels and a legend identify the Sun, Earth Mark Two, and each explosion event.
+**`rpd_final_synthesis.py`** — Combines all layer results into summary 
+visualizations.
 
-6. Key Points for Reviewers
-Relevance to RPD Hypothesis: The simulation illustrates how debris from EM1’s disruption could immediately intersect Earth’s orbit, supporting the RPD’s claims about the LHB and meteor showers. The green trajectories (from 1.0 AU at t=40) are particularly relevant for Earth-intersecting debris, while pink and yellow trajectories (from 2.8 and 3.0 AU) contribute to the asteroid belt.
-Inner Solar System Focus: The ±5 AU plot limits ensure visibility of key dynamics, though some escaping asteroids exceed this range.
-Randomness in Asteroid Velocities: Asteroids are ejected with random directions and magnitudes (up to 1.2 × escape velocity), modeling the chaotic nature of explosive debris. Reviewers can run the code multiple times to observe different realizations, but the qualitative behavior (some asteroids remain bound, others escape) remains consistent.
-7. Usage Instructions
-To run the simulation:
+---
 
-Save the Code: Copy the provided script into a file, e.g., simulation.py.
-Install Dependencies: Run the pip command above in your terminal.
-Execute the Script: In the terminal, navigate to the script’s directory and run:
-bash
+### 3. N-Body Trajectory Simulation (Figure 10)
+**`RPDNBodyCodePrime3.0.py`**  
+REBOUND N-body simulation of asteroid trajectories ejected from three 
+sequential RPD explosion events. Models the immediate dispersal of debris 
+from precursor-Earth's disruption at ~4.55 Ga, demonstrating how debris 
+intersects Earth's orbit and populates the asteroid belt — supporting the 
+RPD explanation for the Late Heavy Bombardment and annual meteor showers.
 
-Collapse
+**Simulation setup:**
+- Sun at origin; Earth Mark Two at 1 AU circular orbit
+- Three explosion events: t=0 yr at 2.8 AU (pink), t=20 yr at 3.0 AU 
+  (yellow), t=40 yr at 1.0 AU (green)
+- 50 massless asteroids per event, random ejection velocities up to 
+  1.2 × escape velocity
+- REBOUND ias15 integrator; 100-year run in 0.1-year steps
+- Output: 3D trajectory plot limited to ±5 AU
 
-Wrap
+---
 
-Copy
-python simulation.py
-View the Plot: A 3D plot will appear, showing the trajectories over 100 years. Use your mouse to rotate and explore the view.
-Modifying Parameters (Optional):
+## Requirements
+```python
+Python 3.11+
+numpy >= 2.0
+scipy >= 1.0
+matplotlib >= 3.0
+rebound        # for RPDNBodyCodePrime3.0.py only
+```
 
-Explosion Times/Positions: Edit explosion_times = [0, 20, 40] and explosion_positions = [[2.8, 0, 0], [3.0, 0, 0], [1.0, 0, 0]] to test different scenarios.
-Number of Asteroids: Change range(50) in add_asteroids to simulate more or fewer asteroids per event.
-Plot Limits: Adjust ax.set_xlim([-5, 5]), ax.set_ylim([-5, 5]), and ax.set_zlim([-5, 5]) to zoom in or out.
-Simulation Duration/Steps: Modify times = np.arange(0, 100.1, 0.1) to change the time range or step size.
-This overview and set of instructions provide reviewers with everything needed to understand, run, and evaluate your simulation code.
+Install all dependencies:
+```bash
+pip install numpy scipy matplotlib rebound
+```
+
+---
+
+## Running the Simulations
+
+**Joint Monte Carlo (primary, ~15 seconds):**
+```bash
+python rpd_joint_monte_carlo.py
+```
+Output: printed results table + rpd_joint_monte_carlo.png
+
+**Full analytical verification at N = 10⁹ per layer:**
+```bash
+python rpd_layer1B_billion.py
+python rpd_layer2_orbital.py
+python rpd_layer3_energy.py
+```
+
+**N-body trajectory simulation:**
+```bash
+python RPDNBodyCodePrime3.0.py
+```
+A 3D interactive plot will appear. Use your mouse to rotate and explore.
+
+---
+
+## Fréchet Correlation Sweep
+
+The joint simulation sweeps ρ from 0.0 to 1.0 automatically. The 
+interpolation formula is:
+
+P_joint(ρ) = [(1 − ρ) × P_L1 × P_L3 + ρ × min(P_L1, P_L3)] × P_L2
+
+This provides a model-free upper bound on joint probability under any 
+positive dependence structure (Fréchet, 1951).
+
+---
+
+## Modifying Parameters (Optional)
+
+**Monte Carlo:** Edit N_TRIALS, BATCH_SIZE, or RHO_VALUES at the top 
+of rpd_joint_monte_carlo.py.
+
+**N-body simulation:** Edit explosion_times, explosion_positions, 
+number of asteroids per event (range(50)), plot limits, or simulation 
+duration in RPDNBodyCodePrime3.0.py.
+
+---
+
+## Citation
+
+If using this code, please cite:
+
+Hurst, A.R., 2026. A Supercharged Earth: Evidence for Catastrophic Planetary 
+Disassembly and Its Implications for Solar System Architecture and 
+Habitability. *Icarus*, submitted.
+
+Fréchet, M., 1951. Sur les tableaux de corrélation dont les marges sont 
+données. Ann. Univ. Lyon Sci., Sect. A 14, 53–77.
+
+---
+
+## Contact
+
+Independent researcher. Brandon, FL.  
+GitHub: https://github.com/Aaronius0000
